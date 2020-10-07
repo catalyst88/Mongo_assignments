@@ -1,0 +1,297 @@
+Assignment 1:
+
+**Query/Find documents**
+
+1.Get all documents
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find().pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f0915529"),
+        "title" : "Fight club",
+        "writer" : "Chuk Palahniuko",
+        "year" : 1999,
+        "actors" : [
+                "Bradd Pitt",
+                "Edward Norton"
+        ]
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552a"),
+        "title" : "Pulp Fiction",
+        "writer" : "Quentin Tarantino",
+        "year" : 1994,
+        "actors" : [
+                "John Travolta",
+                "Uma Thurman"
+        ]
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552b"),
+        "title" : "Inglorious Basterds",
+        "writer" : "Quentin Tarantino",
+        "year" : 2009,
+        "actors" : [
+                "Bradd Pitt",
+                "Diane Kruger",
+                "Eli Roth"
+        ]
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552c"),
+        "title" : "The Hobbit: An Unexpected Journey",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit"
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552d"),
+        "title" : "The Hobbit: The Desolation of Smaug",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2013,
+        "franchise" : "The Hobbit"
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552e"),
+        "title" : "The Hobbit: The Battle of Five Armies",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit",
+        "synopsis" : "Bilbo and company are force to engage in a war..."
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552f"),
+        "title" : "Pee Wee Herman's Big Adventure"
+}
+{ "_id" : ObjectId("5f7a786837981a91f0915530"), "title" : "Avatar" }
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY>
+
+
+2. Get all document with writer set to Quentin Tarantino
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find({writer: "Quentin Tarantino"}).pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f091552a"),
+        "title" : "Pulp Fiction",
+        "writer" : "Quentin Tarantino",
+        "year" : 1994,
+        "actors" : [
+                "John Travolta",
+                "Uma Thurman"
+        ]
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552b"),
+        "title" : "Inglorious Basterds",
+        "writer" : "Quentin Tarantino",
+        "year" : 2009,
+        "actors" : [
+                "Bradd Pitt",
+                "Diane Kruger",
+                "Eli Roth"
+        ]
+}
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY>
+
+3. Get all documents where actor includes "Brad Pitt"
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.aggregate([
+... {$unwind: "$actors"},
+... {$match: {actors: "Bradd Pitt"}}
+... ])
+{ "_id" : ObjectId("5f7a786837981a91f0915529"), "title" : "Fight club", "writer" : "Chuk Palahniuko", "year" : 1999, "actors" : "Bradd Pitt" }
+{ "_id" : ObjectId("5f7a786837981a91f091552b"), "title" : "Inglorious Basterds", "writer" : "Quentin Tarantino", "year" : 2009, "actors" : "Bradd Pitt" }
+
+
+4. Get all documents with franchise set to "The Hobbit"
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find({franchise : "The Hobbit"}).pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f091552c"),
+        "title" : "The Hobbit: An Unexpected Journey",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit"
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552d"),
+        "title" : "The Hobbit: The Desolation of Smaug",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2013,
+        "franchise" : "The Hobbit"
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552e"),
+        "title" : "The Hobbit: The Battle of Five Armies",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit",
+        "synopsis" : "Bilbo and company are force to engage in a war..."
+}
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY>
+
+5. Get all movies released in 90'set
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find({year: {$lt:2000}}).pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f0915529"),
+        "title" : "Fight club",
+        "writer" : "Chuk Palahniuko",
+        "year" : 1999,
+        "actors" : [
+                "Bradd Pitt",
+                "Edward Norton"
+        ]
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552a"),
+        "title" : "Pulp Fiction",
+        "writer" : "Quentin Tarantino",
+        "year" : 1994,
+        "actors" : [
+                "John Travolta",
+                "Uma Thurman"
+        ]
+}
+
+6. Get all movies release before the year 2000 Or after 2010
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.aggregate([
+...
+... {$match:{$or: [{year :{$gt:2010}}, {year: {$lt:2000}}]}},
+... {$project: {title :1}}
+... ])
+{ "_id" : ObjectId("5f7a786837981a91f0915529"), "title" : "Fight club" }
+{ "_id" : ObjectId("5f7a786837981a91f091552a"), "title" : "Pulp Fiction" }
+{ "_id" : ObjectId("5f7a786837981a91f091552c"), "title" : "The Hobbit: An Unexpected Journey" }
+{ "_id" : ObjectId("5f7a786837981a91f091552d"), "title" : "The Hobbit: The Desolation of Smaug" }
+{ "_id" : ObjectId("5f7a786837981a91f091552e"), "title" : "The Hobbit: The Battle of Five Armies" }
+
+
+
+**Updated documents**
+
+1. Add synopsis to "The Hobbit: An Unexpected Journey"
+A reluctant hobbit, Bilbo Baggins, set out lonely....
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.update({"title" : "The Hobbit: An Unexpected Journey"},{$set:{"synopsis":"A reluctant hobbit, Bilbo Baggins, set out lonely...."}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+2. Add synopsis to The Hobbit: The Desolation of Smaug : "The dwarves, along with bilbo Baggins and Gandlafs...."
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.update({"title" : "The Hobbit: The Desolation of Smaug"},{$set:{"synopsis":"The dwarves, along with bilbo Baggins and Gandlafs...."}})
+WriteResult({ "nMatched" : 1, "nUpserted" : 0, "nModified" : 1 })
+
+3. 
+add actor name "Samuel L. Jackson" to the movie Pulp Fiction
+
+db.movies.update({"title" : "Pulp Fiction"},{$set:{"$actors.2":"Samuel L. Jackson"}})
+
+
+**Text Search**
+1. Find all movies that have a synopsis that contains the word "Bilbo"
+
+
+
+db.movies.find({synopsis: {$regex: /Bilbo/}},{_id:0})
+
+**OR**
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.createIndex(synopsis:"text")
+uncaught exception: SyntaxError: missing ) after argument list :
+@(shell):1:30
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.createIndex({synopsis:"text"})
+{
+        "createdCollectionAutomatically" : false,
+        "numIndexesBefore" : 1,
+        "numIndexesAfter" : 2,
+        "ok" : 1,
+        "$clusterTime" : {
+                "clusterTime" : Timestamp(1601952400, 2),
+                "signature" : {
+                        "hash" : BinData(0,"kkaZGjuuPzljYBh5DPwNZO+Yf2U="),
+                        "keyId" : NumberLong("6874462239512854531")
+                }
+        },
+        "operationTime" : Timestamp(1601952400, 2)
+}
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find($text:{$search:"Bilbo"}).pretty()
+uncaught exception: SyntaxError: missing ) after argument list :
+@(shell):1:20
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find({$text:{$search:"Bilbo"}}).pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f091552e"),
+        "title" : "The Hobbit: The Battle of Five Armies",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit",
+        "synopsis" : "Bilbo and company are force to engage in a war..."
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552d"),
+        "title" : "The Hobbit: The Desolation of Smaug",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2013,
+        "franchise" : "The Hobbit",
+        "synopsis" : "The dwarves, along with bilbo Baggins and Gandlafs...."
+}
+{
+        "_id" : ObjectId("5f7a786837981a91f091552c"),
+        "title" : "The Hobbit: An Unexpected Journey",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2012,
+        "franchise" : "The Hobbit",
+        "synopsis" : "A reluctant hobbit, Bilbo Baggins, set out lonely...."
+}
+
+2. Find synopsis with word: Gandlafs
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.find({$text:{$search:"Gandlaf"}}).pretty()
+{
+        "_id" : ObjectId("5f7a786837981a91f091552d"),
+        "title" : "The Hobbit: The Desolation of Smaug",
+        "writer" : "J.R.R. Tolkein",
+        "year" : 2013,
+        "franchise" : "The Hobbit",
+        "synopsis" : "The dwarves, along with bilbo Baggins and Gandlafs...."
+}
+
+3. find all the movies that have word "Bilbo" but not "Gandlaf"
+
+db.movies.aggregate([
+{$match: {$and: [{"synopsis":{$regex: /Bilbo/}}, {"synopsis":{$not:{$regex: /Gandlafs/} }}] }},
+{$project :{title: 1, "_id":0}}
+])
+[ { title: 'The Hobbit: An Unexpected Journey' },
+  { title: 'The Hobbit: The Battle of Five Armies' } ]
+  
+
+4. Find All the movies that have a synopsis that contains the word "dwarves" or "hobbit"
+
+db.movies.aggregate([
+{$match : {$or : [{"synopsis":{$regex:/dwarves/i}}, {"synopsis":{$regex: /hobbit/i}}]}}
+])
+[ { _id: 
+     { _bsontype: 'ObjectID',
+       id: <Buffer 5f 7a 78 68 37 98 1a 91 f0 91 55 2c> },
+    title: 'The Hobbit: An Unexpected Journey',
+    writer: 'J.R.R. Tolkein',
+    year: 2012,
+    franchise: 'The Hobbit',
+    synopsis: 'A reluctant hobbit, Bilbo Baggins, set out lonely....' },
+  { _id: 
+     { _bsontype: 'ObjectID',
+       id: <Buffer 5f 7a 78 68 37 98 1a 91 f0 91 55 2d> },
+    title: 'The Hobbit: The Desolation of Smaug',
+    writer: 'J.R.R. Tolkein',
+    year: 2013,
+    franchise: 'The Hobbit',
+    synopsis: 'The dwarves, along with Bilbo Baggins and Gandlafs ....' } ]
+
+**Delete Documents**
+1. delete the movie "Pee Wee Herman's Big Adventure"
+
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.remove({"title":"Pee Wee Herman's Big Adventure"})
+WriteResult({ "nRemoved" : 1 })
+
+2. delete the movie "Avatar"
+MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.remove({"title":"Avatar"})
+WriteResult({ "nRemoved" : 1 })
