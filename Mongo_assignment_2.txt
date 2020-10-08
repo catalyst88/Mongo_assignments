@@ -1,0 +1,26 @@
+**Atlanta population**
+1. use db.zipcodes.find() to filter to only the results where city is  ATLANTA and state is GA
+
+2. Use db.zipcodes.aggregate with $match to do the same as above
+
+3. use $group to count the number of zip codes in Atlanta
+
+4. use $group to find the total population in Atlanta
+
+
+
+**population by state**
+1. Use aggregate to calculate the total population for each city (you have to use city/state combination). you can use a combinationfor the _id for the $group(city: '$city',state: '$state')
+
+2. Sort the result by population, highest first
+
+3. limit the result to just the first 3 result. What are the top 3 cities in population
+
+4. what are the top 3 cities in population in Texas?
+
+
+**Bonus**
+1.Write a query to get the avg city populationfor each state
+
+2.what are the top 3 states in term of avg city population
+
