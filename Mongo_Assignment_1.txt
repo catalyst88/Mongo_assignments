@@ -295,3 +295,144 @@ WriteResult({ "nRemoved" : 1 })
 2. delete the movie "Avatar"
 MongoDB Enterprise atlas-4zjts6-shard-0:PRIMARY> db.movies.remove({"title":"Avatar"})
 WriteResult({ "nRemoved" : 1 })
+
+
+** Relationships **
+
+show collections
+posts
+comments
+movies
+users
+
+1. find all users
+
+db.users.find().pretty()
+{ _id: ObjectID("5f7e5e9e4179872a40318c13"),
+  username: 'GoodGuyGreg',
+  first_name: 'Good Guy',
+  last_name: 'Greg' }
+{ _id: ObjectID("5f7e5e9e4179872a40318c14"),
+  username: 'ScumbagSteve',
+  fullname: { first: 'Scumbag', last: 'Steve' } }
+
+2. find all posts
+db.posts.find().pretty()
+{ _id: ObjectID("5f7e5ef44179872a40318c15"),
+  username: 'GoodGuyGreg',
+  title: 'Passes out at party',
+  body: 'Wakes up early and cleans house' }
+{ _id: ObjectID("5f7e5ef44179872a40318c16"),
+  username: 'GoodGuyGreg',
+  title: 'Steals your identity',
+  body: 'Raises your credit score' }
+{ _id: ObjectID("5f7e5ef44179872a40318c17"),
+  username: 'GoodGuyGreg',
+  title: 'Reports a bug in your code',
+  body: 'Sends you a Pull Request' }
+{ _id: ObjectID("5f7e5ef44179872a40318c18"),
+  username: 'ScumbagSteve',
+  title: 'Borrow something',
+  body: 'Sells it' }
+{ _id: ObjectID("5f7e5ef44179872a40318c19"),
+  username: 'ScumbagSteve',
+  title: 'Borrow everything',
+  body: 'The end' }
+{ _id: ObjectID("5f7e5ef44179872a40318c1a"),
+  username: 'ScumbagSteve',
+  title: 'Forks your repo on github',
+  body: 'Sets to private' }
+
+3. find all posts that was authored by "GoodGuyGreg"
+
+db.posts.find({username:"GoodGuyGreg" }).pretty()
+{ _id: ObjectID("5f7e5ef44179872a40318c15"),
+  username: 'GoodGuyGreg',
+  title: 'Passes out at party',
+  body: 'Wakes up early and cleans house' }
+{ _id: ObjectID("5f7e5ef44179872a40318c16"),
+  username: 'GoodGuyGreg',
+  title: 'Steals your identity',
+  body: 'Raises your credit score' }
+{ _id: ObjectID("5f7e5ef44179872a40318c17"),
+  username: 'GoodGuyGreg',
+  title: 'Reports a bug in your code',
+  body: 'Sends you a Pull Request' }
+  
+
+4. Find all posts that was authored by "ScumbagSteve"
+
+db.posts.find({username:"ScumbagSteve" }).pretty()
+{ _id: ObjectID("5f7e5ef44179872a40318c18"),
+  username: 'ScumbagSteve',
+  title: 'Borrow something',
+  body: 'Sells it' }
+{ _id: ObjectID("5f7e5ef44179872a40318c19"),
+  username: 'ScumbagSteve',
+  title: 'Borrow everything',
+  body: 'The end' }
+{ _id: ObjectID("5f7e5ef44179872a40318c1a"),
+  username: 'ScumbagSteve',
+  title: 'Forks your repo on github',
+  body: 'Sets to private' }
+
+5. find all comments
+
+db.comments.find().pretty()
+{ _id: ObjectID("5f7e60ff4179872a40318c1b"),
+  username: 'GoodGuyGreg',
+  comment: 'Hope you got a good deal!',
+  post: '5f7e5ef44179872a40318c18' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1c"),
+  username: 'GoodGuyGreg',
+  comment: 'What\'s mine is yours!',
+  post: '5f7e5ef44179872a40318c19' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1d"),
+  username: 'GoodGuyGreg',
+  comment: 'Don\'t violate the licensing agreement!',
+  post: '5f7e5ef44179872a40318c1a' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1e"),
+  username: 'ScumbagSteve',
+  comment: 'It still isn\'t clean',
+  post: '5f7e5ef44179872a40318c15' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1f"),
+  username: 'ScumbagSteve',
+  comment: 'Denied your PR cause i found a hack',
+  post: '5f7e5ef44179872a40318c17' }
+
+6. find all comments that was authored by "GoodguyGreg"
+
+{ _id: ObjectID("5f7e60ff4179872a40318c1b"),
+  username: 'GoodGuyGreg',
+  comment: 'Hope you got a good deal!',
+  post: '5f7e5ef44179872a40318c18' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1c"),
+  username: 'GoodGuyGreg',
+  comment: 'What\'s mine is yours!',
+  post: '5f7e5ef44179872a40318c19' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1d"),
+  username: 'GoodGuyGreg',
+  comment: 'Don\'t violate the licensing agreement!',
+  post: '5f7e5ef44179872a40318c1a' }
+
+7. Find all comments that was authored by "ScumbagSteve"
+
+db.comments.find({username: "ScumbagSteve"}).pretty()
+{ _id: ObjectID("5f7e60ff4179872a40318c1e"),
+  username: 'ScumbagSteve',
+  comment: 'It still isn\'t clean',
+  post: '5f7e5ef44179872a40318c15' }
+{ _id: ObjectID("5f7e60ff4179872a40318c1f"),
+  username: 'ScumbagSteve',
+  comment: 'Denied your PR cause i found a hack',
+  post: '5f7e5ef44179872a40318c17' }
+
+
+8. Find all comments belonging to the post "Report a bug in your code"
+
+db.comments.find({post: "5f7e5ef44179872a40318c17"})
+{ _id: ObjectID("5f7e60ff4179872a40318c1f"),
+  username: 'ScumbagSteve',
+  comment: 'Denied your PR cause i found a hack',
+  post: '5f7e5ef44179872a40318c17' }
+
