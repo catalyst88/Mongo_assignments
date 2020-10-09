@@ -1,26 +1,85 @@
 **Atlanta population**
 1. use db.zipcodes.find() to filter to only the results where city is  ATLANTA and state is GA
+db.zipcodes.find(
+{$and: [{"city":"ATLANTA"},{"state":"GA"}]}
+)
+
+
 
 2. Use db.zipcodes.aggregate with $match to do the same as above
 
+db.zipcodes.aggregate(
+{$match:{$and: [{"city":"ATLANTA"},{"state":"GA"}]}}
+)
+
+
 3. use $group to count the number of zip codes in Atlanta
+
+db.zipcodes.aggregate(
+{$group: {_id:{ID: "$_id",city : "$city"}}},
+{$match : {"_id.city":"ATLANTA"}},
+{$count: "Number of Zipcodes"}
+)
+[ { 'Number of Zipcodes': 41 } ]
+
+
 
 4. use $group to find the total population in Atlanta
 
 
+db.zipcodes.aggregate([
+{$match : {city:"ATLANTA"}},
+{$group: {_id: "$city", PopTotal:{$sum: "$pop"}}}
+])
+
+[ { _id: 'ATLANTA', PopTotal: 630046 } ]
+
+
+
 
 **population by state**
+
 1. Use aggregate to calculate the total population for each city (you have to use city/state combination). you can use a combinationfor the _id for the $group(city: '$city',state: '$state')
+
+db.zipcodes.aggregate([
+{$group: {_id: {city : "$city",state: "$state", Total:{$sum :"$pop"}}}}
+])
+
 
 2. Sort the result by population, highest first
 
+db.zipcodes.aggregate([
+{$group: {_id: {city : "$city",state: "$state", Total:{$sum :"$pop"}}}},
+{$sort: {"_id.Total" : -1}}
+])
+
+
+
 3. limit the result to just the first 3 result. What are the top 3 cities in population
 
+db.zipcodes.aggregate([
+{$group: {_id: {city : "$city",state: "$state", Total:{$sum :"$pop"}}}},
+{$sort: {"_id.Total" : -1}},
+{$limit :100}
+])
+
 4. what are the top 3 cities in population in Texas?
+
+db.zipcodes.aggregate([
+{$group: {_id: {city : "$city",state: "$state", Total:{$sum :"$pop"}}}},
+{$match: {"_id.state": "TX"}},
+{$sort: {"_id.Total": -1}},
+{$limit: 3}
+])
+[ { _id: { city: 'BROWNSVILLE', state: 'TX', Total: 79463 } },
+  { _id: { city: 'ALTON', state: 'TX', Total: 67604 } },
+  { _id: { city: 'SAN ANTONIO', state: 'TX', Total: 58355 } } ]
 
 
 **Bonus**
 1.Write a query to get the avg city populationfor each state
+
+
 
 2.what are the top 3 states in term of avg city population
 
